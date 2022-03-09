@@ -1,0 +1,54 @@
+@font-face {
+  font-family: 'IranSans';
+  src: local('IranSans'),
+    url(./assets/fonts/5c53f1a72f61b5b51e2ea79a22ebc38b.ttf) format('truetype');
+}
+* {
+  font-family: 'IranSans';
+}
+
+html,
+body {
+  width: 100%;
+}
+
+/* @media only screen and (max-width: 576px) {
+  .foodBoxStyle {
+    justify-content: right !important;
+  }
+} */
+.div {
+  background-image: url(./assets/img/bac.jpg) !important;
+  background-size: cover !important;
+  height: 820px;
+  object-fit: contain;
+  filter: opacity(76%) brightness(50%);
+}
+.divInfo {
+  background-image: url(./assets/img/infoback.png) !important;
+  background-size: cover !important;
+  object-fit: contain;
+  height: 820px;
+}
+
+.slick-list {
+  padding: 10px 0px !important;
+}
+.slick-list {
+  text-align: -webkit-center !important;
+}
+.slick-prev {
+  display: none !important;
+}
+.slick-next {
+  display: none !important;
+}
+.date {
+  border: 1px solid #c1b7b7;
+  text-align: end;
+  padding: 10px;
+  width: 100%;
+  height: 45px;
+  outline: none;
+  border-radius: 5px;
+}
