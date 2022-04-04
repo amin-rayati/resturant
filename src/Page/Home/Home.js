@@ -1,7 +1,12 @@
 import { React, useEffect, useRef } from 'react'
+import { LinkContainer } from 'react-router-bootstrap'
 import qr from '../../assets/img/qr-code.png'
+import axios from 'axios'
+import { useLocation } from 'react-router-dom'
 const Home = () => {
   const elementRef = useRef(null)
+  const { pathname } = useLocation()
+  const activePath = pathname.split('/')[1]
 
   useEffect(() => {
     elementRef.current.style.height = `${window.innerHeight}px`
@@ -26,16 +31,19 @@ const Home = () => {
           منوی دیجیتال
         </p>
         <div className='mt-3 mx-auto' style={{ width: 'fit-content' }}>
-          <p
+          <LinkContainer
+            to={`/${activePath}/info`}
             style={{
               color: 'white',
               borderBottom: '1px solid white',
               padding: '10px',
             }}
           >
-            En
-          </p>
-          <p style={{ color: 'white' }}>فارسی</p>
+            <p>En</p>
+          </LinkContainer>
+          <LinkContainer to={`/${activePath}/info`} style={{ color: 'white' }}>
+            <p>فارسی</p>
+          </LinkContainer>
         </div>
       </div>
     </>

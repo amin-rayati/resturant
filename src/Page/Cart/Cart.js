@@ -3,8 +3,10 @@ import { useProjectContext } from '../../context/ProjectProvider'
 import { BiPurchaseTag } from 'react-icons/bi'
 import { FaPlus, FaMinus } from 'react-icons/fa'
 import CodeValidateModal from './CodeValidateModal'
+import Login from '../../component/LoginRegister/Login'
 const Cart = () => {
-  const { codeValidate, codeValidateShow } = useProjectContext()
+  const { codeValidate, codeValidateShow, loginModal, loginModalShow } =
+    useProjectContext()
   const elementRef = useRef(null)
 
   useEffect(() => {
@@ -199,7 +201,12 @@ const Cart = () => {
 
           <div
             className='d-flex my-5'
-            style={{ justifyContent: 'space-around' }}
+            style={{
+              justifyContent: 'space-around',
+              backgroundColor: 'white',
+              borderRadius: '10px',
+              padding: '10px',
+            }}
           >
             <div className='d-flex foodBoxStyle'>
               <p style={{ fontSize: '12px', fontWeight: 'bold' }}>تومان</p>
@@ -244,29 +251,40 @@ const Cart = () => {
             </p>
           </div>
 
-          <div className='d-flex' style={{ justifyContent: 'space-around' }}>
-            <button
-              style={{
-                color: 'white',
-                backgroundColor: '#20C900',
-                padding: '10px 20px',
-                borderRadius: '10px',
-                border: 'none',
-              }}
-            >
-              پرداخت آنلاین
-            </button>
-            <button
-              style={{
-                color: 'white',
-                backgroundColor: '#20C900',
-                padding: '10px 20px',
-                borderRadius: '10px',
-                border: 'none',
-              }}
-            >
-              پرداخت نقدی
-            </button>
+          <div
+            className='d-flex'
+            style={{
+              justifyContent: 'space-around',
+            }}
+          >
+            <div style={{ position: 'fixed', bottom: '20px' }}>
+              <button
+                className='mx-2'
+                onClick={loginModalShow}
+                style={{
+                  color: 'white',
+                  backgroundColor: '#20C900',
+                  padding: '10px 20px',
+                  borderRadius: '10px',
+                  border: 'none',
+                }}
+              >
+                پرداخت آنلاین
+              </button>
+              {loginModal ? <Login /> : null}
+              <button
+                className='mx-2'
+                style={{
+                  color: 'white',
+                  backgroundColor: '#20C900',
+                  padding: '10px 20px',
+                  borderRadius: '10px',
+                  border: 'none',
+                }}
+              >
+                پرداخت نقدی
+              </button>
+            </div>
           </div>
         </div>
       </div>

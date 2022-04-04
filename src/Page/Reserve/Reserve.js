@@ -1,12 +1,32 @@
 import { React, useRef, useEffect, useState } from 'react'
 import { FaPlus, FaMinus } from 'react-icons/fa'
 import DatePicker from 'react-datepicker2'
+import TextField from '@mui/material/TextField'
+import MobileTimePicker from '@mui/lab/MobileTimePicker'
+import AdapterDateFns from '@mui/lab/AdapterDateFns'
+import LocalizationProvider from '@mui/lab/LocalizationProvider'
 const Cart = () => {
   const elementRef = useRef(null)
 
   useEffect(() => {
     elementRef.current.style.height = `${window.innerHeight}px`
   })
+  const [inTime, setInTime] = useState(new Date('2018-01-01T00:00:00.000Z'))
+  const [outTime, setOutTime] = useState(new Date('2018-01-01T00:00:00.000Z'))
+  const [peopleCount, setPeopleCount] = useState('1')
+  const [date, setDate] = useState('')
+
+  const increase = () => {
+    setPeopleCount((peopleCount) => parseInt(peopleCount) + 1)
+  }
+  const decrease = () => {
+    if (peopleCount > 1) {
+      setPeopleCount((peopleCount) => parseInt(peopleCount) - 1)
+    }
+  }
+  const handleDateChange = (e) => {
+    setDate(document.getElementsByClassName('datepicker-input')[0].value)
+  }
 
   return (
     <>
@@ -52,9 +72,13 @@ const Cart = () => {
                   padding: '2px 5px',
                 }}
               >
-                <FaMinus className='mt-1' style={{ color: '#707070' }} />
+                <FaMinus
+                  onClick={decrease}
+                  className='mt-1'
+                  style={{ color: '#707070' }}
+                />
               </div>
-              <p className='mx-2 mt-1'>2</p>
+              <p className='mx-2 mt-1'>{peopleCount}</p>
               <div
                 style={{
                   borderRadius: '4px',
@@ -62,7 +86,11 @@ const Cart = () => {
                   padding: '2px 5px',
                 }}
               >
-                <FaPlus className='mt-1' style={{ color: '#20C900' }} />
+                <FaPlus
+                  onClick={increase}
+                  className='mt-1'
+                  style={{ color: '#20C900' }}
+                />
               </div>
             </div>
             <p
@@ -77,6 +105,7 @@ const Cart = () => {
           </div>
           <div className='my-3'>
             <DatePicker
+              onChange={handleDateChange}
               placeholder='تاریخ رزرو'
               timePicker={false}
               isGregorian={false}
@@ -103,20 +132,56 @@ const Cart = () => {
             >
               ساعت
             </p>
+
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <div className='d-flex'>
+                <div>
+                  <p>خروج</p>
+                  <MobileTimePicker
+                    label='.'
+                    value={outTime}
+                    onChange={(newValue) => {
+                      setOutTime(newValue)
+                    }}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </div>
+
+                <div>
+                  <p>ورود</p>
+                  <MobileTimePicker
+                    label='.'
+                    value={inTime}
+                    onChange={(newValue) => {
+                      setInTime(newValue)
+                    }}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </div>
+              </div>
+            </LocalizationProvider>
           </div>
 
-          <div style={{ justifyContent: 'space-around' }}>
-            <button
-              style={{
-                color: 'white',
-                backgroundColor: '#20C900',
-                padding: '10px 20px',
-                borderRadius: '10px',
-                border: 'none',
-              }}
-            >
-              تایید نهایی
-            </button>
+          <div
+            className='d-flex'
+            style={{
+              justifyContent: 'space-around',
+            }}
+          >
+            <div style={{ position: 'fixed', bottom: '20px' }}>
+              <button
+                className='mx-2'
+                style={{
+                  color: 'white',
+                  backgroundColor: '#20C900',
+                  padding: '10px 20px',
+                  borderRadius: '10px',
+                  border: 'none',
+                }}
+              >
+                تایید نهایی
+              </button>
+            </div>
           </div>
         </div>
       </div>
