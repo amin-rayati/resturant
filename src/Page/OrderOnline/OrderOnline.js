@@ -21,6 +21,7 @@ const OrderOnline = () => {
   const [searchVal, setSearchVal] = useState(seacrhValue)
   const elementRef = useRef(null)
   const [foodList, setFoodList] = useState('')
+  const [foodProperty, setFoodProperty] = useState('')
   const [cat, setCat] = useState('')
 
   const handleSearchChange = (e) => {
@@ -46,6 +47,16 @@ const OrderOnline = () => {
   const getResturantFoodList = async () => {
     const res = await RequestUtils.getResturantFoodList(resUrl, catId)
     setFoodList(res.data)
+  }
+  const getFoodProperty = async (productId) => {
+    const res = await RequestUtils.getFoodProperty(productId)
+
+    if (res.data.length > 0) {
+      setFoodProperty(res.data)
+      setOpen(true)
+    } else {
+      setOpen(false)
+    }
   }
 
   useEffect(() => {
@@ -221,7 +232,9 @@ const OrderOnline = () => {
                               <div className='d-flex foodBoxStyle'>
                                 <div className='foodBoxStyle'>
                                   <button
-                                    onClick={() => setOpen(true)}
+                                    onClick={() => {
+                                      getFoodProperty(e.id)
+                                    }}
                                     style={{
                                       backgroundColor: '#20C900',
                                       borderRadius: '4px',
@@ -307,63 +320,56 @@ const OrderOnline = () => {
                       fontSize: '10px',
                     }}
                   >
-                    کباب کوبیده اصل بناب
+                    {foodProperty ? foodProperty[0].productName : null}
                   </p>
                   <div
                     className='p-3'
                     style={{ border: '1px solid #d7d7d7', borderRadius: '5px' }}
                   >
                     <p style={{ textAlign: 'right' }}>اضافات</p>
-                    <div
-                      className='my-2  d-flex'
-                      style={{ justifyContent: 'space-between' }}
-                    >
-                      <div className='d-flex'>
-                        <p
-                          className='my-auto'
-                          style={{ fontSize: '13px', fontWeight: 'bold' }}
-                        >
-                          تومان
-                        </p>
+                    {foodProperty &&
+                      foodProperty.map((e) => {
+                        return (
+                          <>
+                            <div
+                              key={e.id}
+                              className='my-2  d-flex'
+                              style={{ justifyContent: 'space-between' }}
+                            >
+                              <div className='d-flex'>
+                                <p
+                                  className='my-auto'
+                                  style={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                  }}
+                                >
+                                  تومان
+                                </p>
 
-                        <p
-                          className='my-auto'
-                          style={{ fontSize: '13px', fontWeight: 'bold' }}
-                        >
-                          2000
-                        </p>
-                      </div>
-                      <div className='form-group col-md-4'>
-                        <label className='mr-2'>نان لقمه</label>
-                        <Checkbox value='1' name='نان لقمه' color='success' />
-                      </div>
-                    </div>
-                    <hr />
-                    <div
-                      className='my-2  d-flex'
-                      style={{ justifyContent: 'space-between' }}
-                    >
-                      <div className='d-flex'>
-                        <p
-                          className='my-auto'
-                          style={{ fontSize: '13px', fontWeight: 'bold' }}
-                        >
-                          تومان
-                        </p>
-
-                        <p
-                          className='my-auto'
-                          style={{ fontSize: '13px', fontWeight: 'bold' }}
-                        >
-                          3000
-                        </p>
-                      </div>
-                      <div className='form-group col-md-4'>
-                        <label className='mr-2'>نان باگت</label>
-                        <Checkbox value='1' name='نان لقمه' color='success' />
-                      </div>
-                    </div>
-                    <hr />
+                                <p
+                                  className='my-auto'
+                                  style={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                  }}
+                                >
+                                  {e.price}
+                                </p>
+                              </div>
+                              <div className='form-group col-md-4'>
+                                <label className='mr-2'>{e.name}</label>
+                                <Checkbox
+                                  value='1'
+                                  name={e.name}
+                                  color='success'
+                                />
+                              </div>
+                            </div>
+                            <hr />
+                          </>
+                        )
+                      })}
                   </div>
 
                   <hr />

@@ -11,8 +11,8 @@ const methods = {
   searchProducts: 'searchProducts',
   getContractorCategories: 'getContractorCategories',
   filterProductsByCatId: 'filterProductsByCatId',
+  getProductOptions: 'getProductOptions',
 }
-
 export const RequestUtils = {
   resturantInfo: async (barcode) => {
     let response = await axios.post(
@@ -63,6 +63,20 @@ export const RequestUtils = {
       {
         urlAddress: urlAddress,
         catId: catId ? catId : '',
+      },
+      {
+        headers: {
+          token: 'test',
+        },
+      }
+    )
+    return response.data
+  },
+  getFoodProperty: async (productId) => {
+    let response = await axios.post(
+      `${baseUrl}/${controllers.Products}/API/_${methods.getProductOptions}`,
+      {
+        productId: productId,
       },
       {
         headers: {
