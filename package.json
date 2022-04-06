@@ -39,6 +39,7 @@
     "react-router-dom": "^5.3.0",
     "react-scripts": "^4.0.3",
     "react-slick": "^0.28.1",
+    "react-wheelpicker": "^1.0.8",
     "slick-carousel": "^1.8.1",
     "styled-components": "^5.3.3",
     "stylis": "^4.0.13",

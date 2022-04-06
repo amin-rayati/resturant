@@ -5,6 +5,8 @@ const baseUrl = 'https://rest.negaapps.ir/admin/'
 const controllers = {
   Contractors: 'Contractors',
   Products: 'Products',
+  Reservations: 'Reservations',
+  ContractorTables: 'ContractorTables',
 }
 const methods = {
   singleContractor: 'singleContractor',
@@ -12,6 +14,8 @@ const methods = {
   getContractorCategories: 'getContractorCategories',
   filterProductsByCatId: 'filterProductsByCatId',
   getProductOptions: 'getProductOptions',
+  reservationInfo: 'reservationInfo',
+  getTables: 'getTables',
 }
 export const RequestUtils = {
   resturantInfo: async (barcode) => {
@@ -77,6 +81,34 @@ export const RequestUtils = {
       `${baseUrl}/${controllers.Products}/API/_${methods.getProductOptions}`,
       {
         productId: productId,
+      },
+      {
+        headers: {
+          token: 'test',
+        },
+      }
+    )
+    return response.data
+  },
+  sendCode: async (code) => {
+    let response = await axios.post(
+      `${baseUrl}/${controllers.Reservations}/API/_${methods.reservationInfo}`,
+      {
+        code: code,
+      },
+      {
+        headers: {
+          token: 'test',
+        },
+      }
+    )
+    return response.data
+  },
+  tableList: async (urlAddress) => {
+    let response = await axios.post(
+      `${baseUrl}/${controllers.ContractorTables}/API/_${methods.getTables}`,
+      {
+        urlAddress: urlAddress,
       },
       {
         headers: {

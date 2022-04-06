@@ -1,42 +1,51 @@
 import { useState, useCallback, useEffect } from 'react'
 import { Modal } from 'react-bootstrap'
 import { useProjectContext } from '../../context/ProjectProvider'
-import axios from 'axios'
-import Swal from 'sweetalert2'
-const numOfFields = 3
+import { RequestUtils } from '../../Utils/RequestUtils'
+const CodeValidateModal = () => {
+  const { codeValidate, codeValidateClose, tableId, setTableId } =
+    useProjectContext()
 
-const useSSNFields = () => {
-  let arr = []
+  const [ssnValues, setValue] = useState({
+    ssn1: '',
+    ssn2: '',
+    ssn3: '',
+    ssn4: '',
+    ssn5: '',
+    ssn6: '',
+  })
+  const handleChange = (e) => {
+    const { maxLength, value, name } = e.target
+    const [fieldName, fieldIndex] = name.split('-')
 
-  return {
-    handleChange: (e) => {
-      const { maxLength, value, name } = e.target
-      const [fieldName, fieldIndex] = name.split('-')
-
-      if (value.length >= maxLength) {
-        // Check if it's not the last input field
-        if (parseInt(fieldIndex, 10) <= 4) {
-          // Get the next input field
-          const nextSibling = document.querySelector(
-            `input[name=ssn-${parseInt(fieldIndex, 10) + 1}]`
-          )
-
-          // If found, focus the next field
-          if (nextSibling !== null) {
-            nextSibling.focus()
-          }
+    if (value.length >= maxLength) {
+      if (parseInt(fieldIndex, 10) < 6) {
+        const nextSibling = document.querySelector(
+          `input[name=ssn-${parseInt(fieldIndex, 10) + 1}]`
+        )
+        if (nextSibling !== null) {
+          nextSibling.focus()
         }
       }
-
-      arr.push(value)
-
-      console.log(arr)
-    },
+    }
+    setValue({
+      ...ssnValues,
+      [`ssn${fieldIndex}`]: value,
+    })
   }
-}
-const CodeValidateModal = () => {
-  const { handleChange } = useSSNFields()
-  const { codeValidate, codeValidateClose } = useProjectContext()
+
+  const sendCode = async () => {
+    let code =
+      ssnValues['ssn1'] +
+      ssnValues['ssn2'] +
+      ssnValues['ssn3'] +
+      ssnValues['ssn4'] +
+      ssnValues['ssn5'] +
+      ssnValues['ssn6']
+
+    const res = await RequestUtils.sendCode(code)
+    setTableId(res.data['table_id'])
+  }
 
   return (
     <>
@@ -58,6 +67,36 @@ const CodeValidateModal = () => {
         </Modal.Header>
         <Modal.Body style={{ direction: 'rtl', textAlign: 'right' }}>
           <div className='d-flex' style={{ justifyContent: 'center' }}>
+            <input
+              type='text'
+              name='ssn-6'
+              className='mx-2'
+              maxLength={1}
+              onChange={handleChange}
+              style={{
+                width: '10%',
+                borderTop: 'none',
+                borderRight: 'none',
+                borderLeft: 'none',
+                outline: 'none',
+                textAlign: 'center',
+              }}
+            />
+            <input
+              type='text'
+              name='ssn-5'
+              className='mx-2'
+              maxLength={1}
+              onChange={handleChange}
+              style={{
+                width: '10%',
+                borderTop: 'none',
+                borderRight: 'none',
+                borderLeft: 'none',
+                outline: 'none',
+                textAlign: 'center',
+              }}
+            />
             <input
               type='text'
               name='ssn-4'
@@ -125,13 +164,26 @@ const CodeValidateModal = () => {
           style={{ border: 'none' }}
         >
           <button
-            style={{
-              color: 'white',
-              backgroundColor: '#20C900',
-              padding: '10px 20px',
-              borderRadius: '10px',
-              border: 'none',
-            }}
+            onClick={sendCode}
+            style={
+              ssnValues['ssn4']
+                ? {
+                    color: 'white',
+                    backgroundColor: '#20C900',
+                    padding: '10px 20px',
+                    borderRadius: '10px',
+                    border: 'none',
+                  }
+                : {
+                    color: 'white',
+                    backgroundColor: '#20C900',
+                    padding: '10px 20px',
+                    borderRadius: '10px',
+                    border: 'none',
+                    cursor: 'not-allowed',
+                  }
+            }
+            disabled={ssnValues['ssn4'] ? false : true}
           >
             تایید
           </button>

@@ -11,7 +11,9 @@ import Loading from '../../component/Loading/Loading'
 import { useHistory } from 'react-router-dom'
 import { RequestUtils } from '../../Utils/RequestUtils'
 import Checkbox from '@mui/material/Checkbox'
+import { FaPlus, FaMinus } from 'react-icons/fa'
 const OrderOnline = () => {
+  const { addToCart, cart, removeFromCart } = useProjectContext()
   let history = useHistory()
   const { pathname } = useLocation()
   const resUrl = pathname.split('/')[1]
@@ -21,8 +23,8 @@ const OrderOnline = () => {
   const [searchVal, setSearchVal] = useState(seacrhValue)
   const elementRef = useRef(null)
   const [foodList, setFoodList] = useState('')
-  const [foodProperty, setFoodProperty] = useState('')
   const [cat, setCat] = useState('')
+  const [foodProperty, setFoodProperty] = useState('')
 
   const handleSearchChange = (e) => {
     setSearchVal(e.target.value)
@@ -48,14 +50,14 @@ const OrderOnline = () => {
     const res = await RequestUtils.getResturantFoodList(resUrl, catId)
     setFoodList(res.data)
   }
-  const getFoodProperty = async (productId) => {
-    const res = await RequestUtils.getFoodProperty(productId)
+  const getFoodProperty = async (e) => {
+    const res = await RequestUtils.getFoodProperty(e.id)
 
     if (res.data.length > 0) {
       setFoodProperty(res.data)
       setOpen(true)
     } else {
-      setOpen(false)
+      addToCart(e)
     }
   }
 
@@ -231,22 +233,58 @@ const OrderOnline = () => {
                             <div className='col-md-4 order-md-1 col-sm-4 order-sm-1 col-6 order-1 text-right foodBoxStyle'>
                               <div className='d-flex foodBoxStyle'>
                                 <div className='foodBoxStyle'>
-                                  <button
-                                    onClick={() => {
-                                      getFoodProperty(e.id)
-                                    }}
-                                    style={{
-                                      backgroundColor: '#20C900',
-                                      borderRadius: '4px',
-                                      height: 'max-content',
-                                      padding: '4px 10px',
-                                      color: 'white',
-                                      fontSize: '11px',
-                                      border: 'none',
-                                    }}
-                                  >
-                                    افزودن
-                                  </button>
+                                  {!cart.hasOwnProperty(e.id) ? (
+                                    <button
+                                      onClick={() => {
+                                        getFoodProperty(e)
+                                      }}
+                                      style={{
+                                        backgroundColor: '#20C900',
+                                        borderRadius: '4px',
+                                        height: 'max-content',
+                                        padding: '4px 10px',
+                                        color: 'white',
+                                        fontSize: '11px',
+                                        border: 'none',
+                                      }}
+                                    >
+                                      افزودن
+                                    </button>
+                                  ) : (
+                                    <div className='d-flex foodBoxStyle'>
+                                      <div
+                                        style={{
+                                          backgroundColor: '#D90000',
+                                          borderRadius: '4px',
+                                          height: 'max-content',
+                                          padding: '2px 5px',
+                                        }}
+                                      >
+                                        <FaMinus
+                                          onClick={() => removeFromCart(e)}
+                                          className='mt-1'
+                                          style={{ color: 'white' }}
+                                        />
+                                      </div>
+                                      <p className='mx-2'>
+                                        {cart ? cart[e.id]['amount'] : null}
+                                      </p>
+                                      <div
+                                        style={{
+                                          backgroundColor: '#20C900',
+                                          borderRadius: '4px',
+                                          height: 'max-content',
+                                          padding: '2px 5px',
+                                        }}
+                                      >
+                                        <FaPlus
+                                          onClick={() => addToCart(e)}
+                                          className='mt-1'
+                                          style={{ color: 'white' }}
+                                        />
+                                      </div>
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                             </div>
@@ -393,28 +431,33 @@ const OrderOnline = () => {
             <Sheet.Backdrop />
           </Sheet>
 
-          <div
-            className='d-flex'
-            style={{
-              marginTop: '80px',
-              justifyContent: 'space-around',
-            }}
-          >
-            {/* <div style={{ position: 'fixed', bottom: '20px' }}>
-              <LinkContainer
-                to='/ordernline/addproperty'
+          {localStorage.getItem('cart') &&
+          Object.keys(JSON.parse(localStorage.getItem('cart'))).length !== 0 ? (
+            <Fade in={true} timeout={1000} style={{ transformOrigin: '0 0 0' }}>
+              <div
+                className='d-flex'
                 style={{
-                  color: 'white',
-                  backgroundColor: '#20C900',
-                  padding: '10px 20px',
-                  borderRadius: '5px',
-                  border: 'none',
+                  marginTop: '80px',
+                  justifyContent: 'space-around',
                 }}
               >
-                <button className='mx-2'>مرحله بعد</button>
-              </LinkContainer>
-            </div> */}
-          </div>
+                <div style={{ position: 'fixed', bottom: '20px' }}>
+                  <LinkContainer
+                    to={`/${resUrl}/cart`}
+                    style={{
+                      color: 'white',
+                      backgroundColor: '#20C900',
+                      padding: '10px 20px',
+                      borderRadius: '5px',
+                      border: 'none',
+                    }}
+                  >
+                    <button className='mx-2'>تکمیل خرید</button>
+                  </LinkContainer>
+                </div>
+              </div>
+            </Fade>
+          ) : null}
         </div>
       </div>
     </>
