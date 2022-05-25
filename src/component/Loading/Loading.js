@@ -4,7 +4,10 @@ import Fade from '@mui/material/Fade'
 
 const Loading = () => {
   return (
-    <div className='text-center' style={{ position: 'relative', top: '120px' }}>
+    <div
+      className='text-center'
+      style={{ position: 'relative', marginBottom: '100px' }}
+    >
       <div class='wrapper'>
         <div class='circle'></div>
         <div class='circle'></div>

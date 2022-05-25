@@ -32,7 +32,7 @@ const Home = () => {
         </p>
         <div className='mt-3 mx-auto' style={{ width: 'fit-content' }}>
           <LinkContainer
-            to={`/${activePath}/info`}
+            to={`/info/${activePath}`}
             style={{
               color: 'white',
               borderBottom: '1px solid white',
@@ -41,7 +41,7 @@ const Home = () => {
           >
             <p>En</p>
           </LinkContainer>
-          <LinkContainer to={`/${activePath}/info`} style={{ color: 'white' }}>
+          <LinkContainer to={`/info/${activePath}`} style={{ color: 'white' }}>
             <p>فارسی</p>
           </LinkContainer>
         </div>

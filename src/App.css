@@ -20,15 +20,23 @@ body {
 .div {
   background-image: url(./assets/img/bac.jpg) !important;
   background-size: cover !important;
-  height: 820px;
   object-fit: contain;
+  background-repeat: repeat !important;
+
   filter: opacity(76%) brightness(50%);
 }
 .divInfo {
   background-image: url(./assets/img/infoback.png) !important;
   background-size: cover !important;
   object-fit: contain;
-  height: 820px;
+
+  background-repeat: repeat !important;
+}
+
+@media only screen and (max-width: 350px) {
+  .fontSize {
+    font-size: 8px !important;
+  }
 }
 
 .slick-list {
@@ -166,4 +174,98 @@ body {
   left: auto;
   right: 15%;
   animation-delay: 0.3s;
+}
+.date {
+  text-align: end;
+  font-weight: bolder;
+  color: black !important;
+}
+.dateReq {
+  text-align: end;
+  font-weight: bolder;
+  color: black !important;
+  border: 1px solid #dc3545 !important;
+}
+.css-1s2u09g-control {
+  border: 1px solid #c1b7b7 !important;
+  border-radius: 5px !important;
+  background-color: #fff !important;
+  justify-content: space-between !important;
+  height: 45px !important;
+}
+.selectReq {
+  border: 1px solid #dc3545 !important;
+  border-radius: 5px !important;
+}
+.spinner-border {
+  display: inline-block !important;
+  width: 1rem !important;
+  height: 1rem !important;
+  vertical-align: -0.125em !important;
+  border: 0.25em solid currentColor !important;
+  border-right-color: transparent !important;
+  border-radius: 50% !important;
+  -webkit-animation: 0.75s linear infinite spinner-border !important;
+  animation: 0.75s linear infinite spinner-border !important;
+}
+.MuiPaper-elevation {
+  border-radius: 30px 0px 0px 30px;
+  border-left: 3px solid gold;
+}
+.css-1ee5err-MuiButtonBase-root-MuiBottomNavigationAction-root.Mui-selected {
+  color: #5094bb !important;
+}
+.progress {
+  height: 3px !important;
+  margin-top: 4px !important;
+}
+.foodCm {
+  background-color: #f2f2f2;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-left: 8px;
+  margin-bottom: 8px;
+  width: max-content;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: 2s;
+}
+.foodCm:hover {
+  background-color: #f2f2f2;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-left: 8px;
+  margin-bottom: 8px;
+  width: max-content;
+  white-space: nowrap;
+  overflow: inherit;
+  text-overflow: ellipsis;
+  transition: 2s;
+}
+.infoImg {
+  width: 100% !important;
+  border-radius: 10px !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+.PrivateTabIndicator-root-1 {
+  display: none !important;
+}
+.PrivateTabIndicator-colorSecondary {
+  display: none !important;
+}
+.MuiTabs-indicator {
+  display: none !important;
+}
+.MuiTabPanel-root {
+  padding: 0px !important;
+}
+.MuiTabs-flexContainer {
+  justify-content: space-between !important;
+}
+.MuiTabs-fixed {
+  padding-right: 10px !important;
+  padding-left: 10px !important;
 }

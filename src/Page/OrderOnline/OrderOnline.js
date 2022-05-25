@@ -12,31 +12,39 @@ import { useHistory } from 'react-router-dom'
 import { RequestUtils } from '../../Utils/RequestUtils'
 import Checkbox from '@mui/material/Checkbox'
 import { FaPlus, FaMinus } from 'react-icons/fa'
-const OrderOnline = () => {
+import Skeleton from '@mui/material/Skeleton'
+import Back from '../../component/BackComponent/Back'
+import { BiPurchaseTag } from 'react-icons/bi'
+
+const OrderOnline = ({ orderType }) => {
   const { addToCart, cart, removeFromCart } = useProjectContext()
   let history = useHistory()
   const { pathname } = useLocation()
-  const resUrl = pathname.split('/')[1]
+  const resUrl = pathname.split('/')[2]
   const seacrhValue = pathname.split('/')[3]
   const { catId, catName } = useProjectContext()
   const [isOpen, setOpen] = useState(false)
   const [searchVal, setSearchVal] = useState(seacrhValue)
-  const elementRef = useRef(null)
+
   const [foodList, setFoodList] = useState('')
   const [cat, setCat] = useState('')
   const [foodProperty, setFoodProperty] = useState('')
+  const [addons, setAddons] = useState({})
+  let arr = []
+  let priceArr = []
+  let ID
 
   const handleSearchChange = (e) => {
     setSearchVal(e.target.value)
-    history.push(`/${resUrl}/orderonline/${e.target.value}`)
+    history.push(`/info/${resUrl}/${e.target.value}`)
   }
   const handleKeyDownSearch = (event) => {
     if (event.key === 'Enter') {
-      history.push(`/${resUrl}/orderonline/${searchVal}`)
+      history.push(`/info/${resUrl}/${searchVal}`)
     }
   }
   const clickSearch = () => {
-    history.push(`/${resUrl}/orderonline/${searchVal}`)
+    history.push(`/info/${resUrl}/${searchVal}`)
   }
   const search = async () => {
     const res = await RequestUtils.search(resUrl, seacrhValue)
@@ -53,17 +61,63 @@ const OrderOnline = () => {
   const getFoodProperty = async (e) => {
     const res = await RequestUtils.getFoodProperty(e.id)
 
-    if (res.data.length > 0) {
+    if (res.data.options) {
       setFoodProperty(res.data)
       setOpen(true)
     } else {
       addToCart(e)
     }
   }
+  const nummber = (number) => {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  }
+  const addProperty = ({ id, name, productId, price }) => {
+    if (!addons.hasOwnProperty(id.toString())) {
+      addons[id.toString()] = {}
+    }
+
+    if (!addons[id.toString()].hasOwnProperty(id.toString())) {
+      addons[id.toString()] = {
+        id: id,
+        name: name,
+        productId: productId,
+      }
+    }
+
+    arr.push(id)
+    priceArr.push(price)
+  }
+  const setID = (pro, options) => {
+    arr.sort(function (a, b) {
+      return a - b
+    })
+    let uniqArr = [...new Set(arr)]
+    uniqArr.map((e) => {
+      ID += e
+    })
+
+    if (Object.keys(addons).length > 0) {
+      addToCart(pro, options, ID, priceArr)
+    } else {
+      addToCart(
+        pro,
+        [{ id: '0', name: 'بدون افزودنی', productId: pro.id }],
+        '0' + pro.id,
+        ['0']
+      )
+    }
+    setAddons([])
+  }
+
+  function myFunc(total, num) {
+    return parseInt(total) + parseInt(num)
+  }
 
   useEffect(() => {
-    elementRef.current.style.height = `${window.innerHeight}px`
-  })
+    if (!seacrhValue) {
+      getResturantFoodList()
+    }
+  }, [])
 
   useEffect(() => {
     getResturantCategory()
@@ -82,25 +136,22 @@ const OrderOnline = () => {
     search()
   }, [searchVal])
 
+  console.log(cart)
+
   return (
     <>
-      <div className=' divInfo' ref={elementRef}></div>
-      <div
-        style={{
-          textAlign: 'center',
-          top: '0',
-          position: 'absolute',
-          width: '-webkit-fill-available',
-        }}
-        className='my-5'
-      >
-        <div
-          className='col-md-11 col-sm-11 col-11 m-auto'
-          style={{ justifyContent: 'center' }}
-        >
-          <p style={{ fontWeight: 'bolder', fontSize: '20px' }}>
-            ثبت سفارش حضوری
+      <div>
+        <div style={{ justifyContent: 'center' }}>
+          <p
+            style={{
+              fontWeight: 'bolder',
+              fontSize: '20px',
+              textAlign: 'right',
+            }}
+          >
+            {orderType === 1 ? 'ثبت سفارش حضوری' : 'ثبت سفارش آنلاین'}
           </p>
+
           <div
             style={{
               backgroundColor: '#fff',
@@ -135,6 +186,7 @@ const OrderOnline = () => {
               <BsSearch style={{ color: '#B5B5B5' }} onClick={clickSearch} />
             </div>
           </div>
+
           <div style={{ position: 'relative', bottom: '20px' }}>
             <CatSlider cat={cat} />
           </div>
@@ -163,163 +215,304 @@ const OrderOnline = () => {
               {foodList.length > 0 ? (
                 foodList.map((e, index) => {
                   return (
-                    <Fade
-                      in={true}
-                      timeout={index + 100 * index}
-                      style={{ transformOrigin: '0 0 0' }}
-                    >
-                      <div key={e.id} className='row mx-1 my-3'>
-                        <div
-                          className='col-md-9 col-sm-9 col-8'
-                          style={{
-                            backgroundColor: '#fff',
-                            borderRadius: '10px',
-                            padding: '15px 15px',
-                            margin: 'auto',
-                            boxShadow: '0px 0px 15px -5px rgb(0 0 0 / 50%)',
-                          }}
-                        >
+                    <>
+                      <Fade
+                        in={true}
+                        timeout={index + 100 * index}
+                        style={{ transformOrigin: '0 0 0' }}
+                      >
+                        <div key={e.id} className='row mx-1 my-3'>
                           <div
-                            className='row'
+                            className='col-md-9 col-sm-9 col-8'
                             style={{
-                              justifyContent: 'space-between',
-                              marginTop: '10px',
+                              backgroundColor: '#fff',
+                              borderRadius: '10px',
+                              padding: '15px 15px',
+                              margin: 'auto',
+                              boxShadow: '0px 0px 15px -5px rgb(0 0 0 / 50%)',
                             }}
                           >
-                            <div className='col-md-6 order-md-1 col-sm-6 order-sm-1 col-6 order-1 text-right '>
-                              <div className='d-flex foodBoxStyle'>
+                            <div
+                              className='row'
+                              style={{
+                                justifyContent: 'space-between',
+                                marginTop: '10px',
+                              }}
+                            >
+                              <div className='col-md-6 order-md-1 col-sm-6 order-sm-1 col-6 order-1 text-right '>
+                                <div className='d-flex foodBoxStyle'>
+                                  <p
+                                    style={{
+                                      fontSize: '9px',
+                                      fontWeight: 'bold',
+                                    }}
+                                  >
+                                    تومان
+                                  </p>
+                                  <p
+                                    className='mx-1'
+                                    style={{
+                                      fontSize: '9px',
+                                      fontWeight: 'bold',
+                                    }}
+                                  >
+                                    {nummber(e.price)}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div
+                                className='col-md-6 order-md-2 col-sm-6 order-sm-2 col-6 order-2 foodBoxStyle'
+                                style={{ textAlign: '-webkit-right' }}
+                              >
                                 <p
                                   style={{
                                     fontSize: '9px',
-                                    fontWeight: 'bold',
+                                    fontWeight: 'bolder',
                                   }}
                                 >
-                                  تومان
-                                </p>
-                                <p
-                                  className='mx-1'
-                                  style={{
-                                    fontSize: '9px',
-                                    fontWeight: 'bold',
-                                  }}
-                                >
-                                  {e.price}
+                                  {e.own_name}
                                 </p>
                               </div>
                             </div>
 
                             <div
-                              className='col-md-6 order-md-2 col-sm-6 order-sm-2 col-6 order-2 foodBoxStyle'
-                              style={{ textAlign: '-webkit-right' }}
+                              className='row'
+                              style={{
+                                justifyContent: 'space-between',
+                                marginTop: '4px',
+                              }}
                             >
-                              <p
-                                style={{
-                                  fontSize: '9px',
-                                  fontWeight: 'bolder',
-                                }}
-                              >
-                                {e.own_name}
-                              </p>
-                            </div>
-                          </div>
-
-                          <div
-                            className='row'
-                            style={{
-                              justifyContent: 'space-between',
-                              marginTop: '4px',
-                            }}
-                          >
-                            <div className='col-md-4 order-md-1 col-sm-4 order-sm-1 col-6 order-1 text-right foodBoxStyle'>
-                              <div className='d-flex foodBoxStyle'>
-                                <div className='foodBoxStyle'>
-                                  {!cart.hasOwnProperty(e.id) ? (
-                                    <button
-                                      onClick={() => {
-                                        getFoodProperty(e)
-                                      }}
-                                      style={{
-                                        backgroundColor: '#20C900',
-                                        borderRadius: '4px',
-                                        height: 'max-content',
-                                        padding: '4px 10px',
-                                        color: 'white',
-                                        fontSize: '11px',
-                                        border: 'none',
-                                      }}
-                                    >
-                                      افزودن
-                                    </button>
-                                  ) : (
-                                    <div className='d-flex foodBoxStyle'>
-                                      <div
-                                        style={{
-                                          backgroundColor: '#D90000',
-                                          borderRadius: '4px',
-                                          height: 'max-content',
-                                          padding: '2px 5px',
+                              <div className='col-md-4 order-md-1 col-sm-4 order-sm-1 col-6 order-1 text-right foodBoxStyle'>
+                                <div className='d-flex foodBoxStyle'>
+                                  <div className='foodBoxStyle'>
+                                    {!cart.hasOwnProperty(e.id) ? (
+                                      <button
+                                        onClick={() => {
+                                          getFoodProperty(e)
                                         }}
-                                      >
-                                        <FaMinus
-                                          onClick={() => removeFromCart(e)}
-                                          className='mt-1'
-                                          style={{ color: 'white' }}
-                                        />
-                                      </div>
-                                      <p className='mx-2'>
-                                        {cart ? cart[e.id]['amount'] : null}
-                                      </p>
-                                      <div
                                         style={{
                                           backgroundColor: '#20C900',
                                           borderRadius: '4px',
                                           height: 'max-content',
-                                          padding: '2px 5px',
+                                          padding: '4px 10px',
+                                          color: 'white',
+                                          fontSize: '11px',
+                                          border: 'none',
                                         }}
                                       >
-                                        <FaPlus
-                                          onClick={() => addToCart(e)}
-                                          className='mt-1'
-                                          style={{ color: 'white' }}
-                                        />
+                                        افزودن
+                                      </button>
+                                    ) : (
+                                      <div className='d-flex foodBoxStyle'>
+                                        <div
+                                          style={{
+                                            backgroundColor: '#D90000',
+                                            borderRadius: '4px',
+                                            height: 'max-content',
+                                            padding: '2px 5px',
+                                          }}
+                                        >
+                                          <FaMinus
+                                            onClick={() => removeFromCart(e)}
+                                            className='mt-1'
+                                            style={{ color: 'white' }}
+                                          />
+                                        </div>
+                                        <p className='mx-2'>
+                                          {cart ? cart[e.id]['amount'] : null}
+                                        </p>
+                                        <div
+                                          style={{
+                                            backgroundColor: '#20C900',
+                                            borderRadius: '4px',
+                                            height: 'max-content',
+                                            padding: '2px 5px',
+                                          }}
+                                        >
+                                          <FaPlus
+                                            onClick={() => addToCart(e)}
+                                            className='mt-1'
+                                            style={{ color: 'white' }}
+                                          />
+                                        </div>
                                       </div>
-                                    </div>
-                                  )}
+                                    )}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                            <div
-                              className='col-md-8 order-md-2 col-sm-8 order-sm-2 col-6 order-2 foodBoxStyle '
-                              style={{ textAlign: '-webkit-right' }}
-                            >
-                              <p
-                                style={{ fontSize: '9px', fontWeight: 'bold' }}
+
+                              <div
+                                className='col-md-8 order-md-2 col-sm-8 order-sm-2 col-6 order-2 foodBoxStyle '
+                                style={{ textAlign: '-webkit-right' }}
                               >
-                                {e.detail}
-                              </p>
+                                <p
+                                  style={{
+                                    fontSize: '9px',
+                                    fontWeight: 'bold',
+                                  }}
+                                >
+                                  {e.detail}
+                                </p>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div
-                          className='col-md-3 col-sm-3 col-4'
-                          style={{
-                            justifyContent: 'right',
-                            paddingRight: '0px',
-                          }}
-                        >
-                          <img
-                            src={e.image}
-                            alt={e.id}
+
+                          <div
+                            className='col-md-3 col-sm-3 col-4'
                             style={{
-                              width: '100%',
-                              height: '130px',
-                              borderRadius: '10px',
-                              objectFit: 'cover',
+                              justifyContent: 'right',
+                              paddingRight: '0px',
                             }}
-                          />
+                          >
+                            <img
+                              src={e.image}
+                              alt={e.id}
+                              style={{
+                                width: '100%',
+                                height: '130px',
+                                borderRadius: '10px',
+                                objectFit: 'cover',
+                              }}
+                            />
+                          </div>
+
+                          {/* Add */}
+                          <div>
+                            {cart &&
+                              Object.keys(cart).map((i) => {
+                                return (
+                                  <div>
+                                    {e.id == cart[i]['mainId'] ? (
+                                      <>
+                                        <div
+                                          className='d-flex mt-5'
+                                          style={{
+                                            justifyContent: 'space-between',
+                                          }}
+                                        >
+                                          <div className='d-flex foodBoxStyle'>
+                                            <div
+                                              style={{
+                                                backgroundColor: ' #D90000',
+                                                borderRadius: '4px',
+                                                height: 'max-content',
+                                                padding: '2px 5px',
+                                              }}
+                                            >
+                                              <FaMinus
+                                                onClick={() =>
+                                                  removeFromCart(
+                                                    cart[i]['pro'],
+                                                    cart[i]['props'],
+                                                    i,
+                                                    cart[i]['priceArr']
+                                                  )
+                                                }
+                                                className='mt-1'
+                                                style={{ color: 'white' }}
+                                              />
+                                            </div>
+                                            <p className='mx-2'>
+                                              {' '}
+                                              {cart[i]['amount']}
+                                            </p>
+                                            <div
+                                              style={{
+                                                backgroundColor: '#20C900',
+                                                borderRadius: '4px',
+                                                height: 'max-content',
+                                                padding: '2px 5px',
+                                              }}
+                                            >
+                                              <FaPlus
+                                                onClick={() =>
+                                                  addToCart(
+                                                    cart[i]['pro'],
+                                                    cart[i]['props'],
+                                                    i,
+                                                    cart[i]['priceArr']
+                                                  )
+                                                }
+                                                className='mt-1'
+                                                style={{ color: 'white' }}
+                                              />
+                                            </div>
+                                          </div>
+                                          <div className='d-flex foodBoxStyle'>
+                                            <p
+                                              style={{
+                                                fontSize: '12px',
+                                                fontWeight: 'bold',
+                                              }}
+                                            >
+                                              تومان
+                                            </p>
+                                            <p
+                                              className='mx-2'
+                                              style={{
+                                                fontSize: '12px',
+                                                fontWeight: 'bold',
+                                              }}
+                                            >
+                                              {nummber(
+                                                cart[i]['priceArr'] &&
+                                                  myFunc(
+                                                    cart[i]['priceArr'].reduce(
+                                                      myFunc
+                                                    ) * cart[i]['amount'],
+                                                    cart[i]['pro']['price'] *
+                                                      cart[i]['amount']
+                                                  )
+                                              )}
+                                            </p>
+                                            <BiPurchaseTag
+                                              className='mt-1'
+                                              size={15}
+                                            />
+                                          </div>
+                                          <div>
+                                            <p
+                                              style={{
+                                                fontSize: '12px',
+                                                fontWeight: 'bold',
+
+                                                textAlign: 'right',
+                                              }}
+                                            >
+                                              {cart[i]['pro']['product_name']}
+                                            </p>
+                                            <p>
+                                              {Object.keys(
+                                                cart[i]['props']
+                                              ).map((j) => {
+                                                return (
+                                                  <span>
+                                                    {cart[i]['props'][j] != null
+                                                      ? '  ' +
+                                                        '-' +
+                                                        '  ' +
+                                                        cart[i]['props'][j][
+                                                          'name'
+                                                        ]
+                                                      : ''}
+                                                  </span>
+                                                )
+                                              })}
+                                            </p>
+                                          </div>
+                                        </div>
+                                        <hr />
+                                      </>
+                                    ) : null}
+                                  </div>
+                                )
+                              })}
+                          </div>
+                          {/* Add */}
                         </div>
-                      </div>
-                    </Fade>
+                      </Fade>
+                    </>
                   )
                 })
               ) : (
@@ -329,6 +522,7 @@ const OrderOnline = () => {
                     padding: '20px',
                     border: '1px solid lightgrey',
                     borderRadius: '12px',
+                    marginBottom: '20px',
                   }}
                 >
                   <p>هیچ محصولی یافت نشد</p>
@@ -358,7 +552,9 @@ const OrderOnline = () => {
                       fontSize: '10px',
                     }}
                   >
-                    {foodProperty ? foodProperty[0].productName : null}
+                    {foodProperty
+                      ? foodProperty['options'][0].productName
+                      : null}
                   </p>
                   <div
                     className='p-3'
@@ -366,7 +562,7 @@ const OrderOnline = () => {
                   >
                     <p style={{ textAlign: 'right' }}>اضافات</p>
                     {foodProperty &&
-                      foodProperty.map((e) => {
+                      foodProperty.options.map((e) => {
                         return (
                           <>
                             <div
@@ -398,7 +594,15 @@ const OrderOnline = () => {
                               <div className='form-group col-md-4'>
                                 <label className='mr-2'>{e.name}</label>
                                 <Checkbox
-                                  value='1'
+                                  onChange={() =>
+                                    addProperty({
+                                      id: e.id,
+                                      name: e.name,
+                                      productId: foodProperty.productData['id'],
+                                      price: e.price,
+                                    })
+                                  }
+                                  value={e.id}
                                   name={e.name}
                                   color='success'
                                 />
@@ -412,6 +616,10 @@ const OrderOnline = () => {
 
                   <hr />
                   <button
+                    onClick={() => {
+                      setID(foodProperty.productData, addons)
+                      setOpen(false)
+                    }}
                     style={{
                       color: 'white',
                       backgroundColor: '#20C900',
@@ -437,19 +645,20 @@ const OrderOnline = () => {
               <div
                 className='d-flex'
                 style={{
-                  marginTop: '80px',
                   justifyContent: 'space-around',
                 }}
               >
-                <div style={{ position: 'fixed', bottom: '20px' }}>
+                <div>
                   <LinkContainer
-                    to={`/${resUrl}/cart`}
+                    to={`/cart/${resUrl}/${orderType}`}
                     style={{
                       color: 'white',
                       backgroundColor: '#20C900',
                       padding: '10px 20px',
                       borderRadius: '5px',
                       border: 'none',
+                      // marginBottom: '80px',
+                      // marginTop: '20px',
                     }}
                   >
                     <button className='mx-2'>تکمیل خرید</button>

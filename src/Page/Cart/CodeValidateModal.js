@@ -2,9 +2,17 @@ import { useState, useCallback, useEffect } from 'react'
 import { Modal } from 'react-bootstrap'
 import { useProjectContext } from '../../context/ProjectProvider'
 import { RequestUtils } from '../../Utils/RequestUtils'
+import Swal from 'sweetalert2'
+import Loader from '../../component/Loading/LoginLoading'
 const CodeValidateModal = () => {
-  const { codeValidate, codeValidateClose, tableId, setTableId } =
-    useProjectContext()
+  const {
+    codeValidate,
+    codeValidateClose,
+    setTableId,
+    setTableCode,
+    reservedTableInfo,
+    setReservedTableInfo,
+  } = useProjectContext()
 
   const [ssnValues, setValue] = useState({
     ssn1: '',
@@ -34,6 +42,8 @@ const CodeValidateModal = () => {
     })
   }
 
+  const [loading, setLoading] = useState(false)
+
   const sendCode = async () => {
     let code =
       ssnValues['ssn1'] +
@@ -43,8 +53,27 @@ const CodeValidateModal = () => {
       ssnValues['ssn5'] +
       ssnValues['ssn6']
 
+    setLoading(true)
     const res = await RequestUtils.sendCode(code)
-    setTableId(res.data['table_id'])
+    if (res.isDone) {
+      setLoading(false)
+      setTableId(res.data['table_id'])
+      setTableCode(res.data['code'])
+      setReservedTableInfo(res.data)
+      Swal.fire({
+        type: 'success',
+        text: 'میز رزرو شده شما تایید شد',
+        confirmButtonText: 'فهمیدم',
+      })
+      codeValidateClose()
+    } else {
+      Swal.fire({
+        type: 'error',
+        text: 'میزی برای شما رزرو نشده است.لطفا میز خود را انتخاب کنید',
+        confirmButtonText: 'فهمیدم',
+      })
+      codeValidateClose()
+    }
   }
 
   return (
@@ -72,6 +101,8 @@ const CodeValidateModal = () => {
               name='ssn-6'
               className='mx-2'
               maxLength={1}
+              pattern='[0-9]*'
+              inputmode='numeric'
               onChange={handleChange}
               style={{
                 width: '10%',
@@ -87,6 +118,8 @@ const CodeValidateModal = () => {
               name='ssn-5'
               className='mx-2'
               maxLength={1}
+              pattern='[0-9]*'
+              inputmode='numeric'
               onChange={handleChange}
               style={{
                 width: '10%',
@@ -102,6 +135,8 @@ const CodeValidateModal = () => {
               name='ssn-4'
               className='mx-2'
               maxLength={1}
+              pattern='[0-9]*'
+              inputmode='numeric'
               onChange={handleChange}
               style={{
                 width: '10%',
@@ -117,6 +152,8 @@ const CodeValidateModal = () => {
               className='mx-2'
               name='ssn-3'
               maxLength={1}
+              pattern='[0-9]*'
+              inputmode='numeric'
               onChange={handleChange}
               style={{
                 width: '10%',
@@ -132,6 +169,8 @@ const CodeValidateModal = () => {
               name='ssn-2'
               className='mx-2'
               maxLength={1}
+              pattern='[0-9]*'
+              inputmode='numeric'
               onChange={handleChange}
               style={{
                 width: '10%',
@@ -147,6 +186,8 @@ const CodeValidateModal = () => {
               className='mx-2'
               name='ssn-1'
               maxLength={1}
+              pattern='[0-9]*'
+              inputmode='numeric'
               onChange={handleChange}
               style={{
                 width: '10%',
@@ -185,7 +226,7 @@ const CodeValidateModal = () => {
             }
             disabled={ssnValues['ssn4'] ? false : true}
           >
-            تایید
+            {loading ? <Loader /> : 'تایید'}
           </button>
         </Modal.Footer>
       </Modal>

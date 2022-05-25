@@ -9,10 +9,10 @@ export default function Carousel2({ cat }) {
     slidesToScroll: 4,
     initialSlide: 0,
     dots: true,
-    rtl: true,
-    infinite: true,
+    rtl: false,
+    infinite: false,
     autoplay: false,
-    autoplaySpeed: 2000,
+    autoplaySpeed: 3000,
     responsive: [
       {
         breakpoint: 992,
@@ -21,11 +21,11 @@ export default function Carousel2({ cat }) {
           slidesToScroll: 4,
           initialSlide: 0,
           dots: false,
-          rtl: true,
-          infinite: true,
+          rtl: false,
+          infinite: false,
 
           autoplay: false,
-          autoplaySpeed: 2000,
+          autoplaySpeed: 3000,
         },
       },
       {
@@ -35,11 +35,11 @@ export default function Carousel2({ cat }) {
           slidesToScroll: 3,
           initialSlide: 0,
           dots: false,
-          rtl: true,
-          infinite: true,
+          rtl: false,
+          infinite: false,
 
           autoplay: false,
-          autoplaySpeed: 2000,
+          autoplaySpeed: 3000,
         },
       },
       {
@@ -49,24 +49,24 @@ export default function Carousel2({ cat }) {
           slidesToScroll: 3,
           initialSlide: 0,
           dots: false,
-          rtl: true,
-          infinite: true,
+          rtl: false,
+          infinite: false,
 
           autoplay: false,
-          autoplaySpeed: 2000,
+          autoplaySpeed: 3000,
         },
       },
       {
         breakpoint: 430,
         settings: {
-          slidesToShow: 3,
-          slidesToScroll: 3,
+          slidesToShow: 2,
+          slidesToScroll: 2,
           initialSlide: 0,
           dots: false,
-          rtl: true,
-          infinite: true,
+          rtl: false,
+          infinite: false,
           autoplay: false,
-          autoplaySpeed: 2000,
+          autoplaySpeed: 3000,
         },
       },
       {
@@ -76,25 +76,25 @@ export default function Carousel2({ cat }) {
           slidesToScroll: 2,
           initialSlide: 0,
           dots: false,
-          rtl: true,
-          infinite: true,
+          rtl: false,
+          infinite: false,
 
           autoplay: false,
-          autoplaySpeed: 2000,
+          autoplaySpeed: 3000,
         },
       },
       {
         breakpoint: 280,
         settings: {
-          slidesToShow: 2,
-          slidesToScroll: 2,
+          slidesToShow: 1,
+          slidesToScroll: 1,
           initialSlide: 0,
           dots: false,
-          rtl: true,
-          infinite: true,
+          rtl: false,
+          infinite: false,
 
           autoplay: false,
-          autoplaySpeed: 2000,
+          autoplaySpeed: 3000,
         },
       },
     ],
@@ -109,27 +109,32 @@ export default function Carousel2({ cat }) {
             setCatId('')
             setCatName('همه')
           }}
+          style={{ width: '90%' }}
           className={catId === '' ? 'activeCat' : 'disActiveCat'}
         >
           <span>همه</span>
         </div>
       </div>
       {cat &&
-        cat.map((e) => {
-          return (
-            <div>
-              <div
-                onClick={() => {
-                  setCatId(e.id)
-                  setCatName(e.name)
-                }}
-                className={catId === e.id ? 'activeCat' : 'disActiveCat'}
-              >
-                <span>{e.name}</span>
+        cat
+          .slice(0)
+          .reverse()
+          .map((e) => {
+            return (
+              <div>
+                <div
+                  onClick={() => {
+                    setCatId(e.id)
+                    setCatName(e.name)
+                  }}
+                  style={{ width: '90%' }}
+                  className={catId === e.id ? 'activeCat' : 'disActiveCat'}
+                >
+                  <span>{e.name}</span>
+                </div>
               </div>
-            </div>
-          )
-        })}
+            )
+          })}
     </Slider>
   )
 }

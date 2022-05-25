@@ -7,6 +7,7 @@ const controllers = {
   Products: 'Products',
   Reservations: 'Reservations',
   ContractorTables: 'ContractorTables',
+  Orders: 'Orders',
 }
 const methods = {
   singleContractor: 'singleContractor',
@@ -16,6 +17,8 @@ const methods = {
   getProductOptions: 'getProductOptions',
   reservationInfo: 'reservationInfo',
   getTables: 'getTables',
+  newOrderProducts: 'newOrderProducts',
+  tableReservation: 'tableReservation',
 }
 export const RequestUtils = {
   resturantInfo: async (barcode) => {
@@ -109,6 +112,61 @@ export const RequestUtils = {
       `${baseUrl}/${controllers.ContractorTables}/API/_${methods.getTables}`,
       {
         urlAddress: urlAddress,
+      },
+      {
+        headers: {
+          token: 'test',
+        },
+      }
+    )
+    return response.data
+  },
+  orderProduct: async (
+    costumerId,
+    paymentType,
+    resUrl,
+    details,
+    price,
+    code,
+    products,
+    tableId
+  ) => {
+    let response = await axios.post(
+      `${baseUrl}/${controllers.Orders}/API/_${methods.newOrderProducts}`,
+      {
+        customerId: costumerId,
+        paymentType: paymentType,
+        urlAddress: resUrl,
+        details: details,
+        price: price,
+        orderType: '2',
+        code: code,
+        products: JSON.stringify(products),
+        contractorTableId: tableId,
+      },
+      {
+        headers: {
+          token: 'test',
+        },
+      }
+    )
+    return response.data
+  },
+  reserve: async (
+    customerId,
+    reservationDate,
+    contractorTableId,
+    reservationStart,
+    reservationEnd
+  ) => {
+    let response = await axios.post(
+      `${baseUrl}/${controllers.Reservations}/API/_${methods.tableReservation}`,
+      {
+        customerId: customerId,
+        reservationDate: reservationDate,
+        contractorTableId: contractorTableId,
+        reservationStart: reservationStart,
+        reservationEnd: reservationEnd,
       },
       {
         headers: {

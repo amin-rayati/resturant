@@ -6,7 +6,7 @@ import { LinkContainer } from 'react-router-bootstrap'
 import { useLocation } from 'react-router-dom'
 export default function Carousel2({ id }) {
   const { pathname } = useLocation()
-  const resBarcode = pathname.split('/')[1]
+  const resBarcode = pathname.split('/')[2]
 
   const slickDefaults = {
     slidesToShow: 3,
@@ -95,11 +95,11 @@ export default function Carousel2({ id }) {
     <Slider {...slickDefaults}>
       <div>
         <LinkContainer
-          to={`/${resBarcode}/orderonline`}
+          to={`/orderonline/${resBarcode}`}
           style={{
             borderRadius: '25px',
             textAlign: 'center',
-            width: 'fit-content',
+            width: '95%',
             boxShadow: ' 0px 0px 11px -4px rgb(0 0 0 / 50%)',
             padding: '12px 15px',
             background: 'white',
@@ -115,7 +115,7 @@ export default function Carousel2({ id }) {
           style={{
             borderRadius: '25px',
             textAlign: 'center',
-            width: 'fit-content',
+            width: '95%',
             boxShadow: ' 0px 0px 11px -4px rgb(0 0 0 / 50%)',
             padding: '12px 15px',
             background: 'white',
@@ -128,11 +128,11 @@ export default function Carousel2({ id }) {
       </div>
       <div>
         <LinkContainer
-          to={`/${resBarcode}/reserve/${id}`}
+          to={`/reserve/${resBarcode}`}
           style={{
             borderRadius: '25px',
             textAlign: 'center',
-            width: 'fit-content',
+            width: '95%',
             boxShadow: ' 0px 0px 11px -4px rgb(0 0 0 / 50%)',
             padding: '12px 15px',
             background: 'white',

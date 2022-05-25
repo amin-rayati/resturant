@@ -10,25 +10,15 @@ import { Cookies, useCookies } from 'react-cookie'
 import Grow from '@mui/material/Grow'
 import TextField from '@mui/material/TextField'
 import { makeStyles } from '@material-ui/core/styles'
-const mobileUrl =
-  'https://meyt.neganoon.ir/admin/Customers/API/_startLoginRegister?token=test'
-
-const registerUrl =
-  'https://meyt.neganoon.ir/admin/Customers/API/_register?token=test'
 
 const Login = () => {
   const [cookies, setCookie, removeCookie] = useCookies(['user'])
   const {
-    Id,
     RegisterShow,
     RegisterClose,
     registerModal,
-    buyModal,
-    buyModalClose,
     loginModal,
     loginModalClose,
-    loginModalShow,
-    userData,
     setUserData,
   } = useProjectContext()
 
@@ -120,196 +110,8 @@ const Login = () => {
       }, 4000)
     }
   }, [seconds])
-  const foregtpass = (e) => {
-    e.preventDefault()
-    setBtnLogin(false)
-    setIsPass(false)
-    setbtnsetpass(false)
-    setbtncode1(true)
-    handleCountDown()
-    setCountdown(true)
-    setinputcode1(true)
-    e.preventDefault()
 
-    axios
-      .post(
-        'https://meyt.neganoon.ir/admin/Customers/API/_forgetPassword?token=test',
-        {
-          mobile: phone,
-        },
-        {
-          headers: {
-            token: 'test',
-          },
-        }
-      )
-
-      .then((response) => {})
-      .catch((error) => {
-        console.error(error)
-      })
-  }
-  const resendCode = (e) => {
-    e.preventDefault()
-    setLoading1(true)
-    setTimeout(() => {
-      setCountdown(true)
-      setresendcode(false)
-      setSeconds(30)
-    }, 1000)
-
-    e.preventDefault()
-    validateMobilephone(phone)
-    if (validateMobilephone(phone) === false) return
-
-    axios
-      .post(
-        'https://meyt.neganoon.ir/admin/Customers/API/_forgetPassword?token=test',
-        {
-          mobile: phone,
-        },
-        {
-          headers: {
-            token: 'test',
-          },
-        }
-      )
-      .then((response) => {
-        if (response.status === 200) {
-          Swal.fire({
-            type: 'success',
-            text: 'کد تایید ارسال شد',
-            confirmButtonText: 'فهمیدم',
-          })
-        } else {
-          Swal.fire({
-            type: 'error',
-            text: 'دوباره تلاش کنید',
-            confirmButtonText: 'فهمیدم',
-          })
-        }
-      })
-      .catch((error) => {
-        console.error(error)
-      })
-  }
-  const sendCode1 = (e) => {
-    e.preventDefault()
-    setLoading(true)
-    if (code === '') {
-      Swal.fire({
-        type: 'error',
-        text: 'تمام فیلد ها پر شود',
-        confirmButtonText: 'فهمیدم',
-        onAfterClose: () => {
-          setLoading(false)
-        },
-      })
-    } else {
-      axios
-        .post(
-          'https://meyt.neganoon.ir/admin/Customers/API/_codeValidate?token=test',
-          {
-            mobile: phone,
-            code: code,
-          },
-          {
-            headers: {
-              token: 'test',
-            },
-          }
-        )
-
-        .then((response) => {
-          if (response.data.isDone === true) {
-            Swal.fire({
-              type: 'success',
-              text: 'کد درست است ',
-            })
-            setCountdown(false)
-            setinputcode1(false)
-            setsetnewpass(true)
-            setbtnnewpass(true)
-            setbtncode1(false)
-            setresendcode(false)
-            // getIndividualInfo(e)
-            // setLoading(false)
-            // Swal.fire({
-            //   type: 'success',
-            //   text: 'به نگانون خوش آمدید',
-            //   confirmButtonText: 'فهمیدم',
-            // })
-            // loginModalClose()
-            // setLoading(false)
-          } else {
-            Swal.fire({
-              type: 'error',
-              text: response.data.data,
-              confirmButtonText: 'فهمیدم',
-            })
-          }
-
-          setLoading(false)
-        })
-        .catch((error) => {
-          console.error(error)
-        })
-    }
-  }
-  const handleKeyDownSendCode1 = (event) => {
-    if (event.key === 'Enter') {
-      sendCode1(event)
-    }
-  }
-  const setNewpassword = (e) => {
-    e.preventDefault()
-    setLoading(true)
-    if (newpass1 === '') {
-      Swal.fire({
-        type: 'error',
-        text: 'تمام فیلد ها پر شود',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          setLoading(false)
-        }
-      })
-    } else {
-      axios
-        .post(
-          'https://meyt.neganoon.ir/admin/Customers/API/_setPassword?token=test',
-          {
-            mobile: phone,
-            password: newpass1,
-          },
-          {
-            headers: {
-              token: 'test',
-            },
-          }
-        )
-
-        .then((response) => {
-          if (response.data.isDone === true) {
-            getIndividualInfo(e)
-            Swal.fire({
-              type: 'success',
-              text: ' به نگانون خوش آمدید, رمز جدید با موفقیت ثبت شد',
-            })
-            getIndividualInfo(e)
-          }
-
-          setLoading(false)
-        })
-        .catch((error) => {
-          console.error(error)
-        })
-    }
-  }
-  const handleKeyDownSetNewpassword = (event) => {
-    if (event.key === 'Enter') {
-      setNewpassword(event)
-    }
-  }
+  // startloginregister
   const sendMobile = (e) => {
     e.preventDefault()
     validateMobilephone(phone)
@@ -317,7 +119,7 @@ const Login = () => {
     setLoading(true)
     axios
       .post(
-        mobileUrl,
+        'https://rest.negaapps.ir/admin/Customers/API/_startLoginRegister?token=test',
         {
           mobile: phone,
         },
@@ -329,7 +131,7 @@ const Login = () => {
       )
       .then((response) => {
         if (response.data.isDone) {
-          if (response.data.data['status'] == '1') {
+          if (response.data.data['isRegistered'] == '1') {
             setBtn(false)
             setBtnLogin(true)
             setIsPass(true)
@@ -354,11 +156,122 @@ const Login = () => {
         console.error(error)
       })
   }
-  const handleKeyDownSendMobile = (event) => {
-    if (event.key === 'Enter') {
-      sendMobile(event)
+
+  //register
+  const Register = (e) => {
+    e.preventDefault()
+    setLoading(true)
+    if (name === '' || lastName === '' || gender === '' || password === '') {
+      Swal.fire({
+        type: 'error',
+        text: 'تمام فیلد ها پر شود',
+        confirmButtonText: 'فهمیدم',
+        onAfterClose: () => {
+          setLoading(false)
+        },
+      })
+    } else {
+      axios
+        .post(
+          'https://rest.negaapps.ir/admin/Customers/API/_register?token=test',
+          {
+            name: name,
+            mobile: phone,
+            gender: gender,
+            password: password,
+          },
+          {
+            headers: {
+              token: 'test',
+            },
+          }
+        )
+        .then((response) => {
+          if (response.data.isDone) {
+            Swal.fire({
+              type: 'success',
+              text: 'به منودیجیتال خوش آمدید',
+              confirmButtonText: 'فهمیدم',
+            })
+            getIndividualInfo(e)
+            setIsCodeSent(true)
+            setLoading(false)
+            RegisterClose()
+            loginModalClose()
+            window.location.reload(true)
+          } else {
+            Swal.fire({
+              type: 'error',
+              text: 'کد معرف نامعتبر',
+              confirmButtonText: 'فهمیدم',
+            })
+          }
+          setLoading(false)
+        })
+        .catch((error) => {
+          console.error(error)
+        })
     }
   }
+
+  //login
+  const sendPass = (e) => {
+    e.preventDefault()
+    setLoading(true)
+    if (code === '') {
+      Swal.fire({
+        type: 'error',
+        text: 'تمام فیلد ها پر شود',
+        confirmButtonText: 'فهمیدم',
+        onAfterClose: () => {
+          setLoading(false)
+        },
+      })
+    } else {
+      axios
+        .post(
+          'https://rest.negaapps.ir/admin/Customers/API/_login?token=test',
+          {
+            mobile: phone,
+            password: code,
+          },
+          {
+            headers: {
+              token: 'test',
+            },
+          }
+        )
+
+        .then((response) => {
+          setLoading(false)
+          if (response.data.isDone) {
+            getIndividualInfo(e)
+            setLoading(false)
+            Swal.fire({
+              type: 'success',
+              text: 'به منودیجیتال خوش آمدید',
+              confirmButtonText: 'فهمیدم',
+              onAfterClose: () => {
+                loginModalClose()
+                setLoading(false)
+              },
+            })
+            window.location.reload(true)
+          } else {
+            Swal.fire({
+              type: 'error',
+              text: response.data.data,
+              confirmButtonText: 'فهمیدم',
+            })
+          }
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+    }
+  }
+
+  //codeValidate
   const sendCode = (e) => {
     e.preventDefault()
     setLoading(true)
@@ -376,7 +289,7 @@ const Login = () => {
     } else {
       axios
         .post(
-          'https://meyt.neganoon.ir/admin/Customers/API/_codeValidate?token=test',
+          'https://rest.negaapps.ir/admin/Customers/API/_codeValidate?token=test',
           {
             mobile: phone,
             code: code,
@@ -416,74 +329,9 @@ const Login = () => {
         })
     }
   }
-  const handleKeyDownSendCode = (event) => {
-    if (event.key === 'Enter') {
-      sendCode(event)
-    }
-  }
-  const Register = (e) => {
-    e.preventDefault()
-    setLoading(true)
-    if (name === '' || lastName === '' || gender === '' || password === '') {
-      Swal.fire({
-        type: 'error',
-        text: 'تمام فیلد ها پر شود',
-        confirmButtonText: 'فهمیدم',
-        onAfterClose: () => {
-          setLoading(false)
-        },
-      })
-    } else {
-      axios
-        .post(
-          registerUrl,
-          {
-            fname: name,
-            lname: lastName,
-            mobile: phone,
-            referrer: Referer,
-            gender: gender,
-            password: password,
-            // code: code,
-          },
-          {
-            headers: {
-              token: 'test',
-            },
-          }
-        )
-        .then((response) => {
-          if (response.data.isDone) {
-            Swal.fire({
-              type: 'success',
-              text: 'به نگانون خوش آمدید',
-              confirmButtonText: 'فهمیدم',
-            })
-            getIndividualInfo(e)
-            setIsCodeSent(true)
-            setLoading(false)
-            RegisterClose()
-            loginModalClose()
-          } else {
-            Swal.fire({
-              type: 'error',
-              text: 'کد معرف نامعتبر',
-              confirmButtonText: 'فهمیدم',
-            })
-          }
-          setLoading(false)
-        })
-        .catch((error) => {
-          console.error(error)
-        })
-    }
-  }
-  const handleKeyDownRegister = (event) => {
-    if (event.key === 'Enter') {
-      Register(event)
-    }
-  }
-  const sendPass = (e) => {
+
+  //codeValidate
+  const sendCode1 = (e) => {
     e.preventDefault()
     setLoading(true)
     if (code === '') {
@@ -498,7 +346,7 @@ const Login = () => {
     } else {
       axios
         .post(
-          'https://meyt.neganoon.ir/admin/Customers/API/_login?token=test',
+          'https://rest.negaapps.ir/admin/Customers/API/_codeValidate?token=test',
           {
             mobile: phone,
             code: code,
@@ -511,19 +359,26 @@ const Login = () => {
         )
 
         .then((response) => {
-          setLoading(false)
-          if (response.data.isDone) {
-            getIndividualInfo(e)
-            setLoading(false)
+          if (response.data.isDone === true) {
             Swal.fire({
               type: 'success',
-              text: 'به نگانون خوش آمدید',
-              confirmButtonText: 'فهمیدم',
-              onAfterClose: () => {
-                loginModalClose()
-                setLoading(false)
-              },
+              text: 'کد درست است ',
             })
+            setCountdown(false)
+            setinputcode1(false)
+            setsetnewpass(true)
+            setbtnnewpass(true)
+            setbtncode1(false)
+            setresendcode(false)
+            // getIndividualInfo(e)
+            // setLoading(false)
+            // Swal.fire({
+            //   type: 'success',
+            //   text: 'به منودیجیتال خوش آمدید',
+            //   confirmButtonText: 'فهمیدم',
+            // })
+            // loginModalClose()
+            // setLoading(false)
           } else {
             Swal.fire({
               type: 'error',
@@ -531,22 +386,144 @@ const Login = () => {
               confirmButtonText: 'فهمیدم',
             })
           }
+
+          setLoading(false)
         })
         .catch((error) => {
           console.error(error)
         })
     }
   }
-  const handleKeyDownSendPass = (event) => {
-    if (event.key === 'Enter') {
-      sendPass(event)
+
+  //setNewPassWord
+  const setNewpassword = (e) => {
+    e.preventDefault()
+    setLoading(true)
+    if (newpass1 === '') {
+      Swal.fire({
+        type: 'error',
+        text: 'تمام فیلد ها پر شود',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          setLoading(false)
+        }
+      })
+    } else {
+      axios
+        .post(
+          'https://rest.negaapps.ir/admin/Customers/API/_setPassword?token=test',
+          {
+            mobile: phone,
+            password: newpass1,
+          },
+          {
+            headers: {
+              token: 'test',
+            },
+          }
+        )
+
+        .then((response) => {
+          if (response.data.isDone === true) {
+            getIndividualInfo(e)
+            Swal.fire({
+              type: 'success',
+              text: ' به منودیجیتال خوش آمدید, رمز جدید با موفقیت ثبت شد',
+            })
+            getIndividualInfo(e)
+          }
+
+          setLoading(false)
+        })
+        .catch((error) => {
+          console.error(error)
+        })
     }
   }
+
+  //forgetPassWord
+  const foregtpass = (e) => {
+    e.preventDefault()
+    setBtnLogin(false)
+    setIsPass(false)
+    setbtnsetpass(false)
+    setbtncode1(true)
+    handleCountDown()
+    setCountdown(true)
+    setinputcode1(true)
+    e.preventDefault()
+
+    axios
+      .post(
+        'https://rest.negaapps.ir/admin/Customers/API/_forgetPassword?token=test',
+        {
+          mobile: phone,
+        },
+        {
+          headers: {
+            token: 'test',
+          },
+        }
+      )
+
+      .then((response) => {})
+      .catch((error) => {
+        console.error(error)
+      })
+  }
+
+  //forgetPassWord
+  const resendCode = (e) => {
+    e.preventDefault()
+    setLoading1(true)
+    setTimeout(() => {
+      setCountdown(true)
+      setresendcode(false)
+      setSeconds(30)
+    }, 1000)
+
+    e.preventDefault()
+    validateMobilephone(phone)
+    if (validateMobilephone(phone) === false) return
+
+    axios
+      .post(
+        'https://rest.negaapps.ir/admin/Customers/API/_forgetPassword?token=test',
+        {
+          mobile: phone,
+        },
+        {
+          headers: {
+            token: 'test',
+          },
+        }
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          Swal.fire({
+            type: 'success',
+            text: 'کد تایید ارسال شد',
+            confirmButtonText: 'فهمیدم',
+          })
+        } else {
+          Swal.fire({
+            type: 'error',
+            text: 'دوباره تلاش کنید',
+            confirmButtonText: 'فهمیدم',
+          })
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }
+
+  //getInfo
   const getIndividualInfo = (e) => {
     e.preventDefault()
     axios
       .post(
-        'https://meyt.neganoon.ir/admin/Customers/API/_getCustomerInfo?token=test',
+        'https://rest.negaapps.ir/admin/Customers/API/_customerInfo?token=test',
         {
           mobile: phone,
         },
@@ -565,6 +542,37 @@ const Login = () => {
         console.error(error)
       })
   }
+
+  const handleKeyDownSendCode1 = (event) => {
+    if (event.key === 'Enter') {
+      sendCode1(event)
+    }
+  }
+
+  const handleKeyDownSetNewpassword = (event) => {
+    if (event.key === 'Enter') {
+      setNewpassword(event)
+    }
+  }
+
+  const handleKeyDownSendMobile = (event) => {
+    if (event.key === 'Enter') {
+      sendMobile(event)
+    }
+  }
+
+  const handleKeyDownSendCode = (event) => {
+    if (event.key === 'Enter') {
+      sendCode(event)
+    }
+  }
+
+  const handleKeyDownSendPass = (event) => {
+    if (event.key === 'Enter') {
+      sendPass(event)
+    }
+  }
+
   useEffect(() => {
     if (isCodeSent) {
       const timerID = setInterval(() => handleCountDown(), 1000)
@@ -597,9 +605,9 @@ const Login = () => {
                 onKeyDown={handleKeyDownSendMobile}
                 value={phone}
                 required
+                pattern='[0-9]*'
                 className='my-2 select'
-                pattern='[0-9]{5}[-][0-9]{7}[-][0-9]{1}'
-                type='text'
+                type='number'
                 title='Ten digits code'
                 placeHolder='شماره موبایل'
                 style={{
@@ -628,8 +636,9 @@ const Login = () => {
                     onKeyDown={handleKeyDownSendCode}
                     value={code}
                     required
+                    pattern='[0-9]*'
                     className=' select'
-                    type='text'
+                    type='number'
                     title='Ten digits code'
                     placeHolder='کد تایید'
                     style={{
@@ -660,6 +669,7 @@ const Login = () => {
                     onKeyDown={handleKeyDownSendPass}
                     value={code}
                     required
+                    pattern='[0-9]*'
                     className=' select'
                     type='password'
                     title='Ten digits code'
@@ -693,7 +703,8 @@ const Login = () => {
                     value={code}
                     required
                     className=' select'
-                    type='text'
+                    type='number'
+                    pattern='[0-9]*'
                     title='Ten digits code'
                     placeHolder='کد تایید'
                     style={{
@@ -726,6 +737,7 @@ const Login = () => {
                     required
                     className=' select'
                     type='password'
+                    pattern='[0-9]*'
                     title='Ten digits code'
                     placeHolder='رمز عبور جدید'
                     style={{
@@ -909,33 +921,8 @@ const Login = () => {
                 className='col-9 mt-3'
                 id='lastname'
                 type='text'
+                pattern='[0-9]*'
                 placeHolder='رمز عبور'
-                style={{
-                  borderRadius: '0.45rem',
-                  border: '1px solid #0000004f',
-                  height: '40px',
-                  width: '100%',
-                  outline: 'none',
-                  background: 'white',
-                }}
-              />
-            </div>
-          </Grow>
-
-          <Grow
-            in={registerModal}
-            timeout={1100}
-            style={{ transformOrigin: '0 0 0' }}
-          >
-            <div className='row mx-0 mt-2'>
-              <input
-                onChange={handleLRefererChange}
-                value={Referer}
-                required
-                className='col-9 mt-3'
-                id='lastname'
-                type='text'
-                placeHolder='کد معرف'
                 style={{
                   borderRadius: '0.45rem',
                   border: '1px solid #0000004f',

@@ -22,6 +22,8 @@ export const ProjectProvider = ({ children }) => {
   const addPropertyModalShow = () => setAddPropertyModal(true)
 
   const [tableId, setTableId] = useState('')
+  const [tableCode, setTableCode] = useState('')
+  const [reservedTableInfo, setReservedTableInfo] = useState('')
 
   const [catId, setCatId] = useState('')
   const [catName, setCatName] = useState('')
@@ -33,36 +35,96 @@ export const ProjectProvider = ({ children }) => {
   const count = []
   const [updateUi, setUpdateUi] = useState(true)
 
-  const addToCart = (item) => {
-    setUpdateUi(false)
-    let tmpCart = cart
-    if (!tmpCart.hasOwnProperty(item.id.toString())) {
-      tmpCart[item.id.toString()] = 0
+  const [state, setState] = useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+  })
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (
+      event &&
+      event.type === 'keydown' &&
+      (event.key === 'Tab' || event.key === 'Shift')
+    ) {
+      return
     }
-
-    tmpCart[item.id.toString()] = {
-      amount: +[[tmpCart[item.id]][0].amount] + 1,
-      pro: item,
-    }
-
-    setCart(tmpCart)
-    updateCart(item)
+    setState({ ...state, [anchor]: open })
   }
 
-  const removeFromCart = (item) => {
+  const addToCart = (item, addons, ID, priceArr) => {
     setUpdateUi(false)
     let tmpCart = cart
-    if (!tmpCart.hasOwnProperty(item.id.toString())) {
-      tmpCart[item.id.toString()] = 0
+
+    if (addons) {
+      let ProId = ID.replace('undefined', '')
+      ProId = ProId.replace('+', '')
+      if (!tmpCart.hasOwnProperty(ProId + '+')) {
+        tmpCart[ProId + '+'] = 0
+      }
+      tmpCart[ProId + '+'] = {
+        amount: +[[tmpCart[ProId + '+']][0].amount] + 1,
+        pro: item,
+        props: addons,
+        mainId: item.id,
+        priceArr: priceArr,
+      }
+      setCart(tmpCart)
+      updateCart(item)
+    } else {
+      if (!tmpCart.hasOwnProperty(item.id.toString())) {
+        tmpCart[item.id.toString()] = 0
+      }
+      tmpCart[item.id.toString()] = {
+        amount: +[[tmpCart[item.id]][0].amount] + 1,
+        pro: item,
+      }
+      setCart(tmpCart)
+      updateCart(item)
+    }
+  }
+
+  const removeFromCart = (item, addons, ID, priceArr) => {
+    setUpdateUi(false)
+    let tmpCart = cart
+
+    if (addons) {
+      let ProId = ID.replace('undefined', '')
+      ProId = ProId.replace('+', '')
+      if (!tmpCart.hasOwnProperty(ProId + '+')) {
+        tmpCart[ProId + '+'] = 0
+      }
+      tmpCart[ProId + '+'] = {
+        amount: +[[tmpCart[ProId + '+']][0].amount] - 1,
+        pro: item,
+        props: addons,
+        mainId: item.id,
+        priceArr: priceArr,
+      }
+      setCart(tmpCart)
+      updateCart(item)
+    } else {
+      if (!tmpCart.hasOwnProperty(item.id.toString())) {
+        tmpCart[item.id.toString()] = 0
+      }
+      tmpCart[item.id.toString()] = {
+        amount: +[[tmpCart[item.id]][0].amount] - 1,
+        pro: item,
+      }
+      setCart(tmpCart)
+      updateCart(item)
     }
 
-    tmpCart[item.id.toString()] = {
-      amount: +[[tmpCart[item.id]][0].amount] - 1,
-      pro: item,
-    }
-
-    if ([[tmpCart[item.id]][0].amount] == '0') {
-      delete tmpCart[item.id.toString()]
+    if (addons) {
+      let ProId = ID.replace('undefined', '')
+      ProId = ProId.replace('+', '')
+      if ([[tmpCart[ProId + '+']][0].amount] == '0') {
+        delete tmpCart[ProId + '+']
+      }
+    } else {
+      if ([[tmpCart[item.id]][0].amount] == '0') {
+        delete tmpCart[item.id.toString()]
+      }
     }
 
     setCart(tmpCart)
@@ -81,8 +143,16 @@ export const ProjectProvider = ({ children }) => {
   return (
     <ProjectContext.Provider
       value={{
+        state,
+        setState,
+        toggleDrawer,
+
         tableId,
         setTableId,
+        tableCode,
+        setTableCode,
+        reservedTableInfo,
+        setReservedTableInfo,
 
         cart,
         addToCart,
